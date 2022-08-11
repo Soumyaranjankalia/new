@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        table, th, td {
+  border: 1px solid black;
+}
+    </style>
+</head>
+<body>
+
+  <form id="form">
+    <input id="name" type="text" placeholder="enter id" />
+    <input id="price" type="text" placeholder="Enter city" />
+    <select id="select">
+      <option value="India">India</option>
+      <option value="Pakistan">Pakistan</option>
+      <option value="China">China</option>
+    </select>
+    <input id="img" type="text" placeholder="Enter population" />
+    <input type="submit" />
+  </form>
+ 
+    <table id="addData" style="width:100%">
+      <tr>
+        <th>Id</th>
+        <th>Country</th> 
+        <th>City</th>
+        <th>Population</th>
+        <th>Edit</th>
+        <th>Delete</th>
+
+      </tr>
+      
+      
+    </table>
+    
+</body>
+
+
+
+</html>
+<script>
+
+
+
+
+document.querySelector("#form").addEventListener("submit", addItem);
+document.querySelector(".tr")
+let data = []
+const writeServer = (action, data) => ({
+  method: action,
+  body: JSON.stringify(data),
+  headers: {
+    'Content-Type': 'application/json; charset=UTF-8'
+  }
+});
+
+
+const getResponse = response => response.json();
+const processJSON = json => {
+  if(!!Object.keys(json).length) {
+    // console.log(res.data)
+    output = `
+      <td class="item">${json.title}</td>
+      <td class="item">${json.body}</td>
+
+    `
+  }
+  
+  tr.innerHTML = output;
+}
+
+  function addItem(event) {
+    event.preventDefault();
+    var id = document.querySelector("#name").value;
+    var city = document.querySelector("#price").value;
+    var country = document.querySelector("#select").value;
+    var population = document.querySelector("#img").value;
+
+    var prodObj = {
+      id: id,
+      country: country,
+      city: city,
+      population: population,
+    };
+
+    const url = 'https://soumya-server.herokuapp.com/data';
+
+    
+    
+  fetch(url, writeServer('POST', prodObj))
+    .then(getResponse)
+    .then(processJSON);
+    
+
+  }
+
+
+const tabledata = document.getElementById("addData");
+async function  get_data(){
+	try{ 
+
+		let res = await fetch(`https://soumya-server.herokuapp.com/data`);
+		let data = await res.json();
+		console.log("data:",data)
+		append_data(data)
+    
+
+	}
+	catch(err){
+		console.log("err:", err);
+	}
+}
+
+
+function append_data(data){
+console.log(data)
+
+data.forEach(function (el){
+let tablerow = document.createElement("tr");
+
+let id = document.createElement("td");
+id.innerText = el.id;
+
+let Country= document.createElement("td");
+Country.innerText = el.country;
+
+let City = document.createElement("td");
+City.innerText = el.city;
+
+let Population = document.createElement("td");
+Population.innerText = el.population;
+
+let Edit = document.createElement("td");
+Edit.innerText = "Edit";
+
+let Delete = document.createElement("td");
+Delete.innerText = "Delete";
+
+tablerow.append(id, Country, City, Population, Edit, Delete);
+
+tabledata.append(tablerow);
+
+
+});
+}
+
+get_data()
+
+
+
+
+</script>
